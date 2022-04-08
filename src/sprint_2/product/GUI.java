@@ -249,32 +249,31 @@ public class GUI extends Application {
                     sShape.draw();
 //                    System.out.println(String.format("%d, %d", gridx, gridy));
                     if (gridy < boardSize) {
-                        Cell cell = new Cell(gridx, gridy, 'S');
+                        Cell cell = new Cell(gridx, gridy, 'O');
                         String currentCell = String.format("%d, %d", gridx, gridy);
+                        Cells.add(cell);
 
-
-                        if(Cells.isEmpty()){
+                        if(Cells.size() <= 1){
                             grid.getChildren().add(s);
-                            Cells.add(cell);
                         }
 
-                        if(!Cells.isEmpty()) {
-                            Cells.add(cell);
-                            for (int i = 0; i < Cells.size() - 1; ++i) {
+                        if(Cells.size() > 0) {
+                            for (int i = 0; i < Cells.size()-1; ++i) {
                                 System.out.println(String.format("%d '%s' difference '%s'", i, currentCell, Cells.get(i).getIndex()));
                                 if (Cells.get(i).x == gridx && Cells.get(i).y == gridy) {
                                     ++in;
                                     if (in > 0) {
                                         Cells.remove(Cells.size() - 1);
+                                        cell.setIsFilled();
                                         System.out.println(in);
-                                        break;
                                     }
                                 }else {
-                                    grid.getChildren().add(s);
-                                    in = 0;
-                                    break;
+                                    in++;
                                 }
                             }
+                        }
+                        if(!cell.filled){
+                            grid.getChildren().add(s);
                         }
                     }
                 }
