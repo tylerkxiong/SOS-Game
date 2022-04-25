@@ -45,6 +45,9 @@ public class GUI extends Application {
     RadioButton generalGame = new RadioButton("General Game");
     ToggleGroup toggleGroup = new ToggleGroup();
 
+    int redlines = 0;
+    int bluelines = 0;
+
 
     public enum GameState {
         PLAYING, DRAW, RED_WIN, BLUE_WIN
@@ -92,8 +95,7 @@ public class GUI extends Application {
                 if(parseInt(newValue) < 3) {
                     numrandc.setText("3");
                 }
-                currentGameState = GameState.PLAYING;
-
+                bottomPrompt.setVisible(false);
                 endstatusPrompt.setVisible(false);
                 Cells.removeAllElements();
                 start.setSelected(false);
@@ -237,175 +239,257 @@ public class GUI extends Application {
     }
 
     public void checkforSOS() {
-        Cell currentCell = Cells.get(Cells.size()-1);
-        char cellso = Cells.get(Cells.size()-1).SorO;
+        int size = 2520;
+        int boardSize = parseInt(numrandc.getText());
+        int cellSize = size / boardSize;
+        Cell currentCell = Cells.get(Cells.size() - 1);
+        char cellso = Cells.get(Cells.size() - 1).SorO;
         for (int i = 0; i < Cells.size(); ++i) {
-            System.out.printf("%d. Cell's taken: %s, which is %s \n", i, Cells.get(i).getIndex(), Cells.get(i).getSorO() );
+            System.out.printf("%d. Cell's taken: %s, which is %s \n", i, Cells.get(i).getIndex(), Cells.get(i).getSorO());
         }
 
-        if(cellso == 'S') {
+        if (cellso == 'S') {
             for (int i = 0; i < Cells.size() - 1; ++i) {
-                if(currentCell.x-1 == Cells.get(i).x && currentCell.y-1 == Cells.get(i).y){
-                    if(Cells.get(i).getSorO() == 'O') {
+                if (currentCell.x - 1 == Cells.get(i).x && currentCell.y - 1 == Cells.get(i).y) {
+                    if (Cells.get(i).getSorO() == 'O') {
                         for (int j = 0; j < Cells.size() - 1; ++j) {
-                            if(currentCell.x-2 == Cells.get(j).x && currentCell.y-2 == Cells.get(j).y){
-                                if(Cells.get(j).getSorO() == 'S'){
-                                    if(bottomPrompt.getText() == "Red Player's Turn"){
-
+                            if (currentCell.x - 2 == Cells.get(j).x && currentCell.y - 2 == Cells.get(j).y) {
+                                if (Cells.get(j).getSorO() == 'S') {
+                                    if (bottomPrompt.getText() == "Red Player's Turn") {
+                                        redlines++;
+                                        Line line = new Line();
+                                        line.setStroke(Color.RED);
+                                        line.setStrokeWidth(20);
+                                        drawLine line1 = new drawLine((cellSize / 2 + cellSize * currentCell.x), (cellSize / 2 + cellSize * currentCell.y), (cellSize / 2 + cellSize * Cells.get(j).x), (cellSize / 2 + cellSize * Cells.get(j).y), line);
+                                        line1.draw();
+                                        grid.getChildren().add(line);
                                         currentGameState = GameState.RED_WIN;
-                                        System.out.println("fjdsifj");
                                     }
-                                    if(bottomPrompt.getText() == "Blue Player's Turn"){
-
+                                    if (bottomPrompt.getText() == "Blue Player's Turn") {
+                                        bluelines++;
+                                        Line line = new Line();
+                                        line.setStroke(Color.BLUE);
+                                        line.setStrokeWidth(20);
+                                        drawLine line1 = new drawLine((cellSize / 2 + cellSize * currentCell.x), (cellSize / 2 + cellSize * currentCell.y), (cellSize / 2 + cellSize * Cells.get(j).x), (cellSize / 2 + cellSize * Cells.get(j).y), line);
+                                        line1.draw();
+                                        grid.getChildren().add(line);
                                         currentGameState = GameState.BLUE_WIN;
-                                        System.out.println("fjdsifjdfjafjds");
                                     }
                                 }
                             }
                         }
                     }
                 } //\
-                if(currentCell.x-1 == Cells.get(i).x && currentCell.y == Cells.get(i).y){
-                    if(Cells.get(i).getSorO() == 'O') {
+                if (currentCell.x - 1 == Cells.get(i).x && currentCell.y == Cells.get(i).y) {
+                    if (Cells.get(i).getSorO() == 'O') {
                         for (int j = 0; j < Cells.size() - 1; ++j) {
-                            if(currentCell.x-2 == Cells.get(j).x && currentCell.y == Cells.get(j).y){
-                                if(Cells.get(j).getSorO() == 'S'){
-                                    if(bottomPrompt.getText() == "Red Player's Turn"){
-
+                            if (currentCell.x - 2 == Cells.get(j).x && currentCell.y == Cells.get(j).y) {
+                                if (Cells.get(j).getSorO() == 'S') {
+                                    if (bottomPrompt.getText() == "Red Player's Turn") {
+                                        redlines++;
+                                        Line line = new Line();
+                                        line.setStroke(Color.RED);
+                                        line.setStrokeWidth(20);
+                                        drawLine line1 = new drawLine((cellSize / 2 + cellSize * currentCell.x), (cellSize / 2 + cellSize * currentCell.y), (cellSize / 2 + cellSize * Cells.get(j).x), (cellSize / 2 + cellSize * Cells.get(j).y), line);
+                                        line1.draw();
+                                        grid.getChildren().add(line);
                                         currentGameState = GameState.RED_WIN;
-                                        System.out.println("fjdsifj");
                                     }
-                                    if(bottomPrompt.getText() == "Blue Player's Turn"){
-
+                                    if (bottomPrompt.getText() == "Blue Player's Turn") {
+                                        bluelines++;
+                                        Line line = new Line();
+                                        line.setStroke(Color.BLUE);
+                                        line.setStrokeWidth(20);
+                                        drawLine line1 = new drawLine((cellSize / 2 + cellSize * currentCell.x), (cellSize / 2 + cellSize * currentCell.y), (cellSize / 2 + cellSize * Cells.get(j).x), (cellSize / 2 + cellSize * Cells.get(j).y), line);
+                                        line1.draw();
+                                        grid.getChildren().add(line);
                                         currentGameState = GameState.BLUE_WIN;
-                                        System.out.println("fjdsifjdfjafjds");
                                     }
                                 }
                             }
                         }
                     }
                 }   //-
-                if(currentCell.x-1 == Cells.get(i).x && currentCell.y+1 == Cells.get(i).y){
-                    if(Cells.get(i).getSorO() == 'O') {
+                if (currentCell.x - 1 == Cells.get(i).x && currentCell.y + 1 == Cells.get(i).y) {
+                    if (Cells.get(i).getSorO() == 'O') {
                         for (int j = 0; j < Cells.size() - 1; ++j) {
-                            if(currentCell.x-2 == Cells.get(j).x && currentCell.y+2 == Cells.get(j).y){
-                                if(Cells.get(j).getSorO() == 'S'){
-                                    if(bottomPrompt.getText() == "Red Player's Turn"){
-
+                            if (currentCell.x - 2 == Cells.get(j).x && currentCell.y + 2 == Cells.get(j).y) {
+                                if (Cells.get(j).getSorO() == 'S') {
+                                    if (bottomPrompt.getText() == "Red Player's Turn") {
+                                        redlines++;
+                                        Line line = new Line();
+                                        line.setStroke(Color.RED);
+                                        line.setStrokeWidth(20);
+                                        drawLine line1 = new drawLine((cellSize / 2 + cellSize * currentCell.x), (cellSize / 2 + cellSize * currentCell.y), (cellSize / 2 + cellSize * Cells.get(j).x), (cellSize / 2 + cellSize * Cells.get(j).y), line);
+                                        line1.draw();
+                                        grid.getChildren().add(line);
                                         currentGameState = GameState.RED_WIN;
-                                        System.out.println("fjdsifj");
                                     }
-                                    if(bottomPrompt.getText() == "Blue Player's Turn"){
-
+                                    if (bottomPrompt.getText() == "Blue Player's Turn") {
+                                        bluelines++;
+                                        Line line = new Line();
+                                        line.setStroke(Color.BLUE);
+                                        line.setStrokeWidth(20);
+                                        drawLine line1 = new drawLine((cellSize / 2 + cellSize * currentCell.x), (cellSize / 2 + cellSize * currentCell.y), (cellSize / 2 + cellSize * Cells.get(j).x), (cellSize / 2 + cellSize * Cells.get(j).y), line);
+                                        line1.draw();
+                                        grid.getChildren().add(line);
                                         currentGameState = GameState.BLUE_WIN;
-                                        System.out.println("fjdsifjdfjafjds");
                                     }
                                 }
                             }
                         }
                     }
                 }  ///
-                if(currentCell.x == Cells.get(i).x && currentCell.y-1 == Cells.get(i).y){
-                    if(Cells.get(i).getSorO() == 'O') {
+                if (currentCell.x == Cells.get(i).x && currentCell.y - 1 == Cells.get(i).y) {
+                    if (Cells.get(i).getSorO() == 'O') {
                         for (int j = 0; j < Cells.size() - 1; ++j) {
-                            if(currentCell.x == Cells.get(j).x && currentCell.y-2 == Cells.get(j).y){
-                                if(Cells.get(j).getSorO() == 'S'){
-                                    if(bottomPrompt.getText() == "Red Player's Turn"){
-
+                            if (currentCell.x == Cells.get(j).x && currentCell.y - 2 == Cells.get(j).y) {
+                                if (Cells.get(j).getSorO() == 'S') {
+                                    if (bottomPrompt.getText() == "Red Player's Turn") {
+                                        redlines++;
+                                        Line line = new Line();
+                                        line.setStroke(Color.RED);
+                                        line.setStrokeWidth(20);
+                                        drawLine line1 = new drawLine((cellSize / 2 + cellSize * currentCell.x), (cellSize / 2 + cellSize * currentCell.y), (cellSize / 2 + cellSize * Cells.get(j).x), (cellSize / 2 + cellSize * Cells.get(j).y), line);
+                                        line1.draw();
+                                        grid.getChildren().add(line);
                                         currentGameState = GameState.RED_WIN;
-                                        System.out.println("fjdsifj");
                                     }
-                                    if(bottomPrompt.getText() == "Blue Player's Turn"){
-
+                                    if (bottomPrompt.getText() == "Blue Player's Turn") {
+                                        bluelines++;
+                                        Line line = new Line();
+                                        line.setStroke(Color.BLUE);
+                                        line.setStrokeWidth(20);
+                                        drawLine line1 = new drawLine((cellSize / 2 + cellSize * currentCell.x), (cellSize / 2 + cellSize * currentCell.y), (cellSize / 2 + cellSize * Cells.get(j).x), (cellSize / 2 + cellSize * Cells.get(j).y), line);
+                                        line1.draw();
+                                        grid.getChildren().add(line);
                                         currentGameState = GameState.BLUE_WIN;
-                                        System.out.println("fjdsifjdfjafjds");
                                     }
                                 }
                             }
                         }
                     }
                 }       //|
-                if(currentCell.x+1 == Cells.get(i).x && currentCell.y+1 == Cells.get(i).y){
-                    if(Cells.get(i).getSorO() == 'O') {
+                if (currentCell.x + 1 == Cells.get(i).x && currentCell.y + 1 == Cells.get(i).y) {
+                    if (Cells.get(i).getSorO() == 'O') {
                         for (int j = 0; j < Cells.size() - 1; ++j) {
-                            if(currentCell.x+2 == Cells.get(j).x && currentCell.y+2 == Cells.get(j).y){
-                                if(Cells.get(j).getSorO() == 'S'){
-                                    if(bottomPrompt.getText() == "Red Player's Turn"){
-
+                            if (currentCell.x + 2 == Cells.get(j).x && currentCell.y + 2 == Cells.get(j).y) {
+                                if (Cells.get(j).getSorO() == 'S') {
+                                    if (bottomPrompt.getText() == "Red Player's Turn") {
+                                        redlines++;
+                                        Line line = new Line();
+                                        line.setStroke(Color.RED);
+                                        line.setStrokeWidth(20);
+                                        drawLine line1 = new drawLine((cellSize / 2 + cellSize * currentCell.x), (cellSize / 2 + cellSize * currentCell.y), (cellSize / 2 + cellSize * Cells.get(j).x), (cellSize / 2 + cellSize * Cells.get(j).y), line);
+                                        line1.draw();
+                                        grid.getChildren().add(line);
                                         currentGameState = GameState.RED_WIN;
-                                        System.out.println("fjdsifj");
                                     }
-                                    if(bottomPrompt.getText() == "Blue Player's Turn"){
-
+                                    if (bottomPrompt.getText() == "Blue Player's Turn") {
+                                        bluelines++;
+                                        Line line = new Line();
+                                        line.setStroke(Color.BLUE);
+                                        line.setStrokeWidth(20);
+                                        drawLine line1 = new drawLine((cellSize / 2 + cellSize * currentCell.x), (cellSize / 2 + cellSize * currentCell.y), (cellSize / 2 + cellSize * Cells.get(j).x), (cellSize / 2 + cellSize * Cells.get(j).y), line);
+                                        line1.draw();
+                                        grid.getChildren().add(line);
                                         currentGameState = GameState.BLUE_WIN;
-                                        System.out.println("fjdsifjdfjafjds");
                                     }
                                 }
                             }
                         }
                     }
                 }   ///
-                if(currentCell.x == Cells.get(i).x && currentCell.y+1 == Cells.get(i).y){
-                    if(Cells.get(i).getSorO() == 'O') {
+                if (currentCell.x == Cells.get(i).x && currentCell.y + 1 == Cells.get(i).y) {
+                    if (Cells.get(i).getSorO() == 'O') {
                         for (int j = 0; j < Cells.size() - 1; ++j) {
-                            if(currentCell.x == Cells.get(j).x && currentCell.y+2 == Cells.get(j).y){
-                                if(Cells.get(j).getSorO() == 'S'){
-                                    if(bottomPrompt.getText() == "Red Player's Turn"){
-
+                            if (currentCell.x == Cells.get(j).x && currentCell.y + 2 == Cells.get(j).y) {
+                                if (Cells.get(j).getSorO() == 'S') {
+                                    if (bottomPrompt.getText() == "Red Player's Turn") {
+                                        redlines++;
+                                        Line line = new Line();
+                                        line.setStroke(Color.RED);
+                                        line.setStrokeWidth(20);
+                                        drawLine line1 = new drawLine((cellSize / 2 + cellSize * currentCell.x), (cellSize / 2 + cellSize * currentCell.y), (cellSize / 2 + cellSize * Cells.get(j).x), (cellSize / 2 + cellSize * Cells.get(j).y), line);
+                                        line1.draw();
+                                        grid.getChildren().add(line);
                                         currentGameState = GameState.RED_WIN;
-                                        System.out.println("fjdsifj");
                                     }
-                                    if(bottomPrompt.getText() == "Blue Player's Turn"){
-
+                                    if (bottomPrompt.getText() == "Blue Player's Turn") {
+                                        bluelines++;
+                                        Line line = new Line();
+                                        line.setStroke(Color.BLUE);
+                                        line.setStrokeWidth(20);
+                                        drawLine line1 = new drawLine((cellSize / 2 + cellSize * currentCell.x), (cellSize / 2 + cellSize * currentCell.y), (cellSize / 2 + cellSize * Cells.get(j).x), (cellSize / 2 + cellSize * Cells.get(j).y), line);
+                                        line1.draw();
+                                        grid.getChildren().add(line);
                                         currentGameState = GameState.BLUE_WIN;
-                                        System.out.println("fjdsifjdfjafjds");
                                     }
                                 }
                             }
                         }
                     }
                 }   //|
-                if(currentCell.x+1 == Cells.get(i).x && currentCell.y-1 == Cells.get(i).y){
-                    if(Cells.get(i).getSorO() == 'O') {
+                if (currentCell.x + 1 == Cells.get(i).x && currentCell.y - 1 == Cells.get(i).y) {
+                    if (Cells.get(i).getSorO() == 'O') {
                         for (int j = 0; j < Cells.size() - 1; ++j) {
-                            if(currentCell.x+2 == Cells.get(j).x && currentCell.y-2 == Cells.get(j).y){
-                                if(Cells.get(j).getSorO() == 'S'){
-                                    if(bottomPrompt.getText() == "Red Player's Turn"){
-
+                            if (currentCell.x + 2 == Cells.get(j).x && currentCell.y - 2 == Cells.get(j).y) {
+                                if (Cells.get(j).getSorO() == 'S') {
+                                    if (bottomPrompt.getText() == "Red Player's Turn") {
+                                        redlines++;
+                                        Line line = new Line();
+                                        line.setStroke(Color.RED);
+                                        line.setStrokeWidth(20);
+                                        drawLine line1 = new drawLine((cellSize / 2 + cellSize * currentCell.x), (cellSize / 2 + cellSize * currentCell.y), (cellSize / 2 + cellSize * Cells.get(j).x), (cellSize / 2 + cellSize * Cells.get(j).y), line);
+                                        line1.draw();
+                                        grid.getChildren().add(line);
                                         currentGameState = GameState.RED_WIN;
-                                        System.out.println("fjdsifj");
                                     }
-                                    if(bottomPrompt.getText() == "Blue Player's Turn"){
-
+                                    if (bottomPrompt.getText() == "Blue Player's Turn") {
+                                        bluelines++;
+                                        Line line = new Line();
+                                        line.setStroke(Color.BLUE);
+                                        line.setStrokeWidth(20);
+                                        drawLine line1 = new drawLine((cellSize / 2 + cellSize * currentCell.x), (cellSize / 2 + cellSize * currentCell.y), (cellSize / 2 + cellSize * Cells.get(j).x), (cellSize / 2 + cellSize * Cells.get(j).y), line);
+                                        line1.draw();
+                                        grid.getChildren().add(line);
                                         currentGameState = GameState.BLUE_WIN;
-                                        System.out.println("fjdsifjdfjafjds");
                                     }
                                 }
                             }
                         }
                     }
                 }   //-
-                if(currentCell.x+1 == Cells.get(i).x && currentCell.y == Cells.get(i).y){
-                    if(Cells.get(i).getSorO() == 'O') {
+                if (currentCell.x + 1 == Cells.get(i).x && currentCell.y == Cells.get(i).y) {
+                    if (Cells.get(i).getSorO() == 'O') {
                         for (int j = 0; j < Cells.size() - 1; ++j) {
-                            if(currentCell.x+2 == Cells.get(j).x && currentCell.y == Cells.get(j).y){
-                                if(Cells.get(j).getSorO() == 'S'){
-                                    if(bottomPrompt.getText() == "Red Player's Turn"){
-
+                            if (currentCell.x + 2 == Cells.get(j).x && currentCell.y == Cells.get(j).y) {
+                                if (Cells.get(j).getSorO() == 'S') {
+                                    if (bottomPrompt.getText() == "Red Player's Turn") {
+                                        redlines++;
+                                        Line line = new Line();
+                                        line.setStroke(Color.RED);
+                                        line.setStrokeWidth(20);
+                                        drawLine line1 = new drawLine((cellSize / 2 + cellSize * currentCell.x), (cellSize / 2 + cellSize * currentCell.y), (cellSize / 2 + cellSize * Cells.get(j).x), (cellSize / 2 + cellSize * Cells.get(j).y), line);
+                                        line1.draw();
+                                        grid.getChildren().add(line);
                                         currentGameState = GameState.RED_WIN;
-                                        System.out.println("fjdsifj");
                                     }
-                                    if(bottomPrompt.getText() == "Blue Player's Turn"){
-
+                                    if (bottomPrompt.getText() == "Blue Player's Turn") {
+                                        bluelines++;
+                                        Line line = new Line();
+                                        line.setStroke(Color.BLUE);
+                                        line.setStrokeWidth(20);
+                                        drawLine line1 = new drawLine((cellSize / 2 + cellSize * currentCell.x), (cellSize / 2 + cellSize * currentCell.y), (cellSize / 2 + cellSize * Cells.get(j).x), (cellSize / 2 + cellSize * Cells.get(j).y), line);
+                                        line1.draw();
+                                        grid.getChildren().add(line);
                                         currentGameState = GameState.BLUE_WIN;
-                                        System.out.println("fjdsifjdfjafjds");
                                     }
                                 }
                             }
                         }
                     }
-                }   //-
-
+                }
             }
         }
     }
@@ -431,13 +515,11 @@ public class GUI extends Application {
 
                     if (gridy < boardSize) {
                         Cell cell = new Cell(gridx, gridy, 'S');
-                        String currentCell = String.format("%d, %d", gridx, gridy);
                         Cells.add(cell);
 
 
                         if(Cells.size() > 0) {
                             for (int i = 0; i < Cells.size()-1; ++i) {
-//                                System.out.println(String.format("%d '%s' difference '%s'", i, currentCell, Cells.get(i).getIndex()));
                                 if (Cells.get(i).x == gridx && Cells.get(i).y == gridy) {
                                     ++in;
                                     if (in > 0) {
@@ -490,7 +572,7 @@ public class GUI extends Application {
                 checkforSOS();
                 bottomPrompt.setText("Blue Player's Turn");
                 bottomPrompt.setVisible(true);
-                System.out.println("\nBLUE PLAYER TURN");
+                System.out.println("BLUE PLAYER TURN\n");
 
                 if(toggleGroup.getSelectedToggle() == simpleGame) {
                     if (currentGameState == GameState.RED_WIN) {
@@ -498,9 +580,33 @@ public class GUI extends Application {
                         endstatusPrompt.setText("Red Player Wins!");
                         endstatusPrompt.setVisible(true);
                     }
+                    else {
+                        bluePlayerTurn();
+                    }
                 }
-                else {
-                    bluePlayerTurn();
+                if(toggleGroup.getSelectedToggle() == generalGame){
+                    if (currentGameState == GameState.RED_WIN) {
+                        currentGameState = GameState.PLAYING;
+                    }
+                    if(Cells.size() == boardSize*boardSize){
+                        if(redlines > bluelines){
+                            currentGameState = GameState.RED_WIN;
+                            bottomPrompt.setVisible(false);
+                            endstatusPrompt.setText("Red Player Wins!");
+                            endstatusPrompt.setVisible(true);
+                            System.out.printf("Red: %d \nBlue: %d", redlines, bluelines);
+                        }
+                        if(bluelines == redlines){
+                            currentGameState = GameState.DRAW;
+                            bottomPrompt.setVisible(false);
+                            endstatusPrompt.setText("Draw!");
+                            endstatusPrompt.setVisible(true);
+                            System.out.printf("Red: %d \nBlue: %d", redlines, bluelines);
+                        }
+                    }
+                    else{
+                        bluePlayerTurn();
+                    }
                 }
             }
         });
@@ -512,12 +618,12 @@ public class GUI extends Application {
             public void handle(MouseEvent mouseEvent) {
                 int size = 2520;
                 int boardSize = parseInt(numrandc.getText());
-                int cellSize = size/boardSize;
-                int gridx = (int)mouseEvent.getX()/cellSize;
-                int gridy = (int)mouseEvent.getY()/cellSize;
+                int cellSize = size / boardSize;
+                int gridx = (int) mouseEvent.getX() / cellSize;
+                int gridy = (int) mouseEvent.getY() / cellSize;
                 int in = 0;
 
-                if(toggle2.getSelectedToggle() == S2check) {
+                if (toggle2.getSelectedToggle() == S2check) {
                     Text s = new Text("S");
                     s.setScaleX(cellSize / 11);
                     s.setScaleY(cellSize / 11);
@@ -528,8 +634,8 @@ public class GUI extends Application {
                         Cell cell = new Cell(gridx, gridy, 'S');
                         Cells.add(cell);
 
-                        if(Cells.size() > 0) {
-                            for (int i = 0; i < Cells.size()-1; ++i) {
+                        if (Cells.size() > 0) {
+                            for (int i = 0; i < Cells.size() - 1; ++i) {
 //                                System.out.println(String.format("%d '%s' difference '%s'", i, currentCell, Cells.get(i).getIndex()));
                                 if (Cells.get(i).x == gridx && Cells.get(i).y == gridy) {
                                     ++in;
@@ -537,18 +643,18 @@ public class GUI extends Application {
                                         Cells.remove(Cells.size() - 1);
                                         cell.setIsFilled();
                                     }
-                                }else {
+                                } else {
                                     in++;
                                 }
                             }
                         }
-                        if(!cell.filled){
+                        if (!cell.filled) {
                             grid.getChildren().add(s);
                         }
                     }
                 }
 
-                if(toggle2.getSelectedToggle() == O2check) {
+                if (toggle2.getSelectedToggle() == O2check) {
                     Text o = new Text("O");
                     o.setScaleX(cellSize / 11);
                     o.setScaleY(cellSize / 11);
@@ -560,8 +666,8 @@ public class GUI extends Application {
                         String currentCell = String.format("%d, %d", gridx, gridy);
                         Cells.add(cell);
 
-                        if(Cells.size() > 0) {
-                            for (int i = 0; i < Cells.size()-1; ++i) {
+                        if (Cells.size() > 0) {
+                            for (int i = 0; i < Cells.size() - 1; ++i) {
 //                                System.out.println(String.format("%d '%s' difference '%s'", i, currentCell, Cells.get(i).getIndex()));
                                 if (Cells.get(i).x == gridx && Cells.get(i).y == gridy) {
                                     ++in;
@@ -569,32 +675,56 @@ public class GUI extends Application {
                                         Cells.remove(Cells.size() - 1);
                                         cell.setIsFilled();
                                     }
-                                }else {
+                                } else {
                                     in++;
                                 }
                             }
                         }
-                        if(!cell.filled){
+                        if (!cell.filled) {
                             grid.getChildren().add(o);
                         }
                     }
                 }
 
-//                for (int i = 0; i < Cells.size(); ++i) {
-//                    System.out.printf("%d. Cell's taken: %s, which is %s \n", i, Cells.get(i).getIndex(), Cells.get(i).getSorO() );
-//                }
                 checkforSOS();
                 bottomPrompt.setText("Red Player's Turn");
                 bottomPrompt.setVisible(true);
-                System.out.println("\nRED PLAYER TURN");
-                if(currentGameState == GameState.BLUE_WIN) {
-                    bottomPrompt.setVisible(false);
-                    endstatusPrompt.setText("Blue Player Wins!");
-                    endstatusPrompt.setVisible(true);
+                System.out.println("RED PLAYER TURN\n");
 
+                if (toggleGroup.getSelectedToggle() == simpleGame) {
+                    if (currentGameState == GameState.BLUE_WIN) {
+                        bottomPrompt.setVisible(false);
+                        endstatusPrompt.setText("Blue Player Wins!");
+                        endstatusPrompt.setVisible(true);
+
+                    } else {
+                        redPlayerTurn();
+                    }
                 }
-                else {
-                    redPlayerTurn();
+                if (toggleGroup.getSelectedToggle() == generalGame) {
+                    if (currentGameState == GameState.BLUE_WIN) {
+
+                        currentGameState = GameState.PLAYING;
+                    }
+                    if (Cells.size() == boardSize * boardSize) {
+                        System.out.println("HFJF");
+                        if (bluelines > redlines) {
+                            currentGameState = GameState.BLUE_WIN;
+                            bottomPrompt.setVisible(false);
+                            endstatusPrompt.setText("Blue Player Wins!");
+                            endstatusPrompt.setVisible(true);
+                            System.out.printf("Red: %d \nBlue: %d", redlines, bluelines);
+                        }
+                        if(bluelines == redlines){
+                            currentGameState = GameState.DRAW;
+                            bottomPrompt.setVisible(false);
+                            endstatusPrompt.setText("Draw!");
+                            endstatusPrompt.setVisible(true);
+                            System.out.printf("Red: %d \nBlue: %d", redlines, bluelines);
+                        }
+                    } else {
+                        redPlayerTurn();
+                    }
                 }
             }
         });
@@ -613,6 +743,28 @@ public class GUI extends Application {
             s.setTranslateX(x);
             s.setTranslateY(y);
         }
+
+        public void drawthat(){}
+
+    }
+    public class drawLine {
+        private double x, y, x2, y2;
+        private Line line;
+
+        drawLine(double x, double y, double x2, double y2, Line line){
+            this.x = x;
+            this.y = y;
+            this.x2 = x2;
+            this.y2 =y2;
+            this.line = line;
+        }
+
+        public void draw(){
+            line.setStartX(x);
+            line.setStartY(y);
+            line.setEndX(x2);
+            line.setEndY(y2);
+        }
     }
 
     @Override
@@ -621,6 +773,9 @@ public class GUI extends Application {
             @Override
             public void handle(ActionEvent actionEvent) {
                 if(start.isSelected()){
+                    currentGameState = GameState.PLAYING;
+                    redlines = 0;
+                    bluelines = 0;
                     redPlayerTurn();
                 }
             }

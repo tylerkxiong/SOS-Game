@@ -30,4 +30,21 @@ public class GUITest {
     @Test
     public void testsetupScene() {
     }
+    @Test
+    public void testitsadraw() {
+    }
+    @Test
+    public void testDiagonallogic() {
+    }
+    @Test
+    public void testVerticallogic() {
+    }
+    @Test
+    public void testHorzontalLogiv() {
+    }
+    @Test
+    public void testSimpleGame() {
+    }
+
+
 }
