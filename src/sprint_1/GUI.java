@@ -1,7 +1,5 @@
-package src.sprint_2.product;
+package src.sprint_1;
 
-import java.util.Random;
-import java.util.random.*;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -24,6 +22,7 @@ import java.util.Objects;
 import java.util.Vector;
 
 import static java.lang.Integer.parseInt;
+
 
 public class GUI extends Application {
     StackPane top = new StackPane();
@@ -51,19 +50,18 @@ public class GUI extends Application {
     RadioButton Human2 = new RadioButton("Human");
     RadioButton Computer2 = new RadioButton("Computer");
     ToggleGroup aiorhuman2 = new ToggleGroup();
-    Random indexx = new Random();
-    Random indexy = new Random();
-    Random sor = new Random();
-    int in = 1;
 
     int redlines = 0;
     int bluelines = 0;
+
 
     public enum GameState {
         PLAYING, DRAW, RED_WIN, BLUE_WIN
     }
 
     private GameState currentGameState;
+
+
 
     public class Cell {
         private int x, y;
@@ -159,12 +157,6 @@ public class GUI extends Application {
                     start.setSelected(true);
                     set_board_size.setText("");
                 }
-                if(aiorhuman2.getSelectedToggle() == null || aiorhuman.getSelectedToggle() ==null){
-                    start.setSelected(false);
-                    set_board_size.setVisible(false);
-                    set_board_size.setText("Select Human or Computer");
-                    set_board_size.setVisible(true);
-                }
             }
         });
     }
@@ -208,38 +200,31 @@ public class GUI extends Application {
 
     public void leftrightplayerchoices(){
         Text p1 = new Text("Red Player");
-        p1.setTranslateX(30);
-        p1.setTranslateY(300);
         Human.setTranslateX(50);
         Human.setTranslateY(300);
         Computer.setTranslateX(50);
         Computer.setTranslateY(350);
+        p1.setTranslateX(30);
+        p1.setTranslateY(300);
         Scheck.setTranslateX(90);
         Ocheck.setTranslateX(90);
         Scheck.setTranslateY(300);
         Ocheck.setTranslateY(300);
-        Human.setToggleGroup(aiorhuman);
-        Computer.setToggleGroup(aiorhuman);
         Scheck.setToggleGroup(toggle);
         Ocheck.setToggleGroup(toggle);
-        redPplayer.getChildren().addAll(p1, Human, Scheck, Ocheck, Computer);
+        redPplayer.getChildren().addAll(p1, Scheck, Ocheck);
 
         Text p2 = new Text("Blue Player");
         p2.setTranslateX(-30);
         p2.setTranslateY(300);
-        Human2.setTranslateX(-50);
-        Human2.setTranslateY(300);
-        Computer2.setTranslateX(-50);
-        Computer2.setTranslateY(350);
+
         S2check.setTranslateX(-90);
         O2check.setTranslateX(-90);
         S2check.setTranslateY(300);
         O2check.setTranslateY(300);
-        Human2.setToggleGroup(aiorhuman2);
-        Computer2.setToggleGroup(aiorhuman2);
         S2check.setToggleGroup(toggle2);
         O2check.setToggleGroup(toggle2);
-        bluePlayer.getChildren().addAll(p2, Human2, S2check, O2check, Computer2);
+        bluePlayer.getChildren().addAll(p2, S2check, O2check);
     }
 
     public void setupScene(Stage primaryStage){
@@ -272,8 +257,6 @@ public class GUI extends Application {
         for (int i = 0; i < Cells.size(); ++i) {
             System.out.printf("%d. Cell's taken: %s, which is %s \n", i, Cells.get(i).getIndex(), Cells.get(i).getSorO());
         }
-
-
 
         if (cellso == 'S') {
             for (int i = 0; i < Cells.size() - 1; ++i) {
@@ -522,265 +505,239 @@ public class GUI extends Application {
     }
 
     public void redPlayerTurn() {
-        if(currentGameState == GameState.PLAYING) {
-            int size = 2520;
-            int boardSize = parseInt(numrandc.getText());
-            int cellSize = size / boardSize;
-            grid.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent mouseEvent) {
+        grid.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                int size = 2520;
+                int boardSize = parseInt(numrandc.getText());
+                int cellSize = size/boardSize;
+                int gridx = (int)mouseEvent.getX()/cellSize;
+                int gridy = (int)mouseEvent.getY()/cellSize;
+                int in = 0;
+
+                if(toggle.getSelectedToggle() == Scheck) {
+                    Text s = new Text("S");
+                    s.setScaleX(cellSize / 11);
+                    s.setScaleY(cellSize / 11);
+                    shapeDraw sShape = new shapeDraw((cellSize / 2 + cellSize * gridx), (cellSize / 2 + cellSize * gridy), s);
+                    sShape.draw();
 
 
-                    int gridx = (int) mouseEvent.getX() / cellSize;
-                    int gridy = (int) mouseEvent.getY() / cellSize;
+                    if (gridy < boardSize) {
+                        Cell cell = new Cell(gridx, gridy, 'S');
+                        Cells.add(cell);
 
 
-                    if (toggle.getSelectedToggle() == Scheck) {
-                        Text s = new Text("S");
-                        s.setScaleX(cellSize / 11);
-                        s.setScaleY(cellSize / 11);
-                        shapeDraw sShape = new shapeDraw((cellSize / 2 + cellSize * gridx), (cellSize / 2 + cellSize * gridy), s);
-                        sShape.draw();
-
-
-                        if (gridy < boardSize) {
-                            Cell cell = new Cell(gridx, gridy, 'S');
-                            Cells.add(cell);
-
-
-                            if (Cells.size() > 0) {
-                                for (int i = 0; i < Cells.size() - 1; ++i) {
-                                    if (Cells.get(i).x == gridx && Cells.get(i).y == gridy) {
-                                        ++in;
+                        if(Cells.size() > 0) {
+                            for (int i = 0; i < Cells.size()-1; ++i) {
+                                if (Cells.get(i).x == gridx && Cells.get(i).y == gridy) {
+                                    ++in;
+                                    if (in > 0) {
                                         Cells.remove(Cells.size() - 1);
                                         cell.setIsFilled();
                                     }
+                                }else {
+                                    in++;
                                 }
                             }
-                            if (!cell.filled) {
-                                grid.getChildren().add(s);
-                                in = 0;
-                            }
+                        }
+                        if(!cell.filled){
+                            grid.getChildren().add(s);
                         }
                     }
+                }
 
-                    if (toggle.getSelectedToggle() == Ocheck) {
-                        Text o = new Text("O");
-                        o.setScaleX(cellSize / 11);
-                        o.setScaleY(cellSize / 11);
-                        shapeDraw sShape = new shapeDraw((cellSize / 2 + cellSize * gridx), (cellSize / 2 + cellSize * gridy), o);
-                        sShape.draw();
-                        if (gridy < boardSize) {
-                            Cell cell = new Cell(gridx, gridy, 'O');
-                            String currentCell = String.format("%d, %d", gridx, gridy);
-                            Cells.add(cell);
+                if(toggle.getSelectedToggle() == Ocheck) {
+                    Text o = new Text("O");
+                    o.setScaleX(cellSize / 11);
+                    o.setScaleY(cellSize / 11);
+                    shapeDraw sShape = new shapeDraw((cellSize / 2 + cellSize * gridx), (cellSize / 2 + cellSize * gridy), o);
+                    sShape.draw();
+//                    System.out.println(String.format("%d, %d", gridx, gridy));
+                    if (gridy < boardSize) {
+                        Cell cell = new Cell(gridx, gridy, 'O');
+                        String currentCell = String.format("%d, %d", gridx, gridy);
+                        Cells.add(cell);
 
-                            if (Cells.size() > 0) {
-                                for (int i = 0; i < Cells.size() - 1; ++i) {
-                                    if (Cells.get(i).x == gridx && Cells.get(i).y == gridy) {
-                                        ++in;
+                        if(Cells.size() > 0) {
+                            for (int i = 0; i < Cells.size()-1; ++i) {
+//                                System.out.println(String.format("%d '%s' difference '%s'", i, currentCell, Cells.get(i).getIndex()));
+                                if (Cells.get(i).x == gridx && Cells.get(i).y == gridy) {
+                                    ++in;
+                                    if (in > 0) {
                                         Cells.remove(Cells.size() - 1);
                                         cell.setIsFilled();
                                     }
+                                }else {
+                                    in++;
                                 }
                             }
-                            if (!cell.filled) {
-                                grid.getChildren().add(o);
-                                in = 0;
-                            }
+                        }
+                        if(!cell.filled){
+                            grid.getChildren().add(o);
                         }
                     }
+                }
 
-                    System.out.println(in);
-                    checkforSOS();
-                    if (Cells.size() == boardSize * boardSize && bluelines == 0 && redlines == 0) {
-                        currentGameState = GameState.DRAW;
+                checkforSOS();
+                bottomPrompt.setText("Blue Player's Turn");
+                bottomPrompt.setVisible(true);
+                System.out.println("BLUE PLAYER TURN\n");
+
+                if(toggleGroup.getSelectedToggle() == simpleGame) {
+                    if (currentGameState == GameState.RED_WIN) {
                         bottomPrompt.setVisible(false);
-                        endstatusPrompt.setText("Draw!");
+                        endstatusPrompt.setText("Red Player Wins!");
                         endstatusPrompt.setVisible(true);
                     }
-
-                    if (toggleGroup.getSelectedToggle() == simpleGame) {
-                        if (currentGameState == GameState.RED_WIN) {
+                    else {
+                        bluePlayerTurn();
+                    }
+                }
+                if(toggleGroup.getSelectedToggle() == generalGame){
+                    if (currentGameState == GameState.RED_WIN) {
+                        currentGameState = GameState.PLAYING;
+                    }
+                    if(Cells.size() == boardSize*boardSize){
+                        if(redlines > bluelines){
+                            currentGameState = GameState.RED_WIN;
                             bottomPrompt.setVisible(false);
                             endstatusPrompt.setText("Red Player Wins!");
                             endstatusPrompt.setVisible(true);
-                        } else {
-                            if (in == 0 && currentGameState ==  GameState.PLAYING) {
-                                bottomPrompt.setText("Blue Player's Turn");
-                                bottomPrompt.setVisible(true);
-                                bluePlayerTurn();
-                            }
+                            System.out.printf("Red: %d \nBlue: %d", redlines, bluelines);
+                        }
+                        if(bluelines == redlines){
+                            currentGameState = GameState.DRAW;
+                            bottomPrompt.setVisible(false);
+                            endstatusPrompt.setText("Draw!");
+                            endstatusPrompt.setVisible(true);
+                            System.out.printf("Red: %d \nBlue: %d", redlines, bluelines);
                         }
                     }
-                    if (toggleGroup.getSelectedToggle() == generalGame) {
-                        if (currentGameState == GameState.RED_WIN && Cells.size() != boardSize * boardSize) {
-                            currentGameState = GameState.PLAYING;
-                        }
-                        if (Cells.size() == boardSize * boardSize) {
-                            if (redlines > bluelines) {
-                                currentGameState = GameState.RED_WIN;
-                                bottomPrompt.setVisible(false);
-                                endstatusPrompt.setText("Red Player Wins!");
-                                endstatusPrompt.setVisible(true);
-                                System.out.printf("Red: %d \nBlue: %d", redlines, bluelines);
-                            }
-                            if (bluelines > redlines) {
-                                currentGameState = GameState.BLUE_WIN;
-                                bottomPrompt.setVisible(false);
-                                endstatusPrompt.setText("Blue Player Wins!");
-                                endstatusPrompt.setVisible(true);
-                                System.out.printf("Red: %d \nBlue: %d", redlines, bluelines);
-                            }
-                            if (bluelines == redlines) {
-                                currentGameState = GameState.DRAW;
-                                bottomPrompt.setVisible(false);
-                                endstatusPrompt.setText("Draw!");
-                                endstatusPrompt.setVisible(true);
-                                System.out.printf("Red: %d \nBlue: %d", redlines, bluelines);
-                            }
-                        } else {
-                            if (in == 0) {
-                                bottomPrompt.setText("Blue Player's Turn");
-                                bottomPrompt.setVisible(true);
-                                bluePlayerTurn();
-                            }
-                        }
+                    else{
+                        bluePlayerTurn();
                     }
-
-
                 }
-            });
-
-        }
+            }
+        });
     }
 
     public void bluePlayerTurn() {
-        if(currentGameState == GameState.PLAYING) {
-            int size = 2520;
-            int boardSize = parseInt(numrandc.getText());
-            int cellSize = size / boardSize;
-            grid.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent mouseEvent) {
+        grid.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                int size = 2520;
+                int boardSize = parseInt(numrandc.getText());
+                int cellSize = size / boardSize;
+                int gridx = (int) mouseEvent.getX() / cellSize;
+                int gridy = (int) mouseEvent.getY() / cellSize;
+                int in = 0;
 
-                    int gridx = (int) mouseEvent.getX() / cellSize;
-                    int gridy = (int) mouseEvent.getY() / cellSize;
+                if (toggle2.getSelectedToggle() == S2check) {
+                    Text s = new Text("S");
+                    s.setScaleX(cellSize / 11);
+                    s.setScaleY(cellSize / 11);
+                    shapeDraw sShape = new shapeDraw((cellSize / 2 + cellSize * gridx), (cellSize / 2 + cellSize * gridy), s);
+                    sShape.draw();
+//                    System.out.println(String.format("%d, %d", gridx, gridy));
+                    if (gridy < boardSize) {
+                        Cell cell = new Cell(gridx, gridy, 'S');
+                        Cells.add(cell);
 
-
-                    if (toggle2.getSelectedToggle() == S2check) {
-                        Text s = new Text("S");
-                        s.setScaleX(cellSize / 11);
-                        s.setScaleY(cellSize / 11);
-                        shapeDraw sShape = new shapeDraw((cellSize / 2 + cellSize * gridx), (cellSize / 2 + cellSize * gridy), s);
-                        sShape.draw();
-                        if (gridy < boardSize) {
-                            Cell cell = new Cell(gridx, gridy, 'S');
-                            Cells.add(cell);
-
-                            if (Cells.size() > 0) {
-                                for (int i = 0; i < Cells.size() - 1; ++i) {
-                                    if (Cells.get(i).x == gridx && Cells.get(i).y == gridy) {
-                                        ++in;
+                        if (Cells.size() > 0) {
+                            for (int i = 0; i < Cells.size() - 1; ++i) {
+//                                System.out.println(String.format("%d '%s' difference '%s'", i, currentCell, Cells.get(i).getIndex()));
+                                if (Cells.get(i).x == gridx && Cells.get(i).y == gridy) {
+                                    ++in;
+                                    if (in > 0) {
                                         Cells.remove(Cells.size() - 1);
                                         cell.setIsFilled();
                                     }
+                                } else {
+                                    in++;
                                 }
                             }
-                            if (!cell.filled) {
-                                grid.getChildren().add(s);
-                                in = 0;
-                            }
                         }
-                    }
-
-                    if (toggle2.getSelectedToggle() == O2check) {
-                        Text o = new Text("O");
-                        o.setScaleX(cellSize / 11);
-                        o.setScaleY(cellSize / 11);
-                        shapeDraw sShape = new shapeDraw((cellSize / 2 + cellSize * gridx), (cellSize / 2 + cellSize * gridy), o);
-                        sShape.draw();
-                        if (gridy < boardSize) {
-                            Cell cell = new Cell(gridx, gridy, 'O');
-                            String currentCell = String.format("%d, %d", gridx, gridy);
-                            Cells.add(cell);
-
-                            if (Cells.size() > 0) {
-                                for (int i = 0; i < Cells.size() - 1; ++i) {
-                                    if (Cells.get(i).x == gridx && Cells.get(i).y == gridy) {
-                                        ++in;
-                                        Cells.remove(Cells.size() - 1);
-                                        cell.setIsFilled();
-                                    }
-                                }
-                            }
-                            if (!cell.filled) {
-                                grid.getChildren().add(o);
-                                in = 0;
-                            }
-                        }
-                    }
-                    System.out.println(in);
-
-                    checkforSOS();
-                    if (Cells.size() == boardSize * boardSize && bluelines == 0 && redlines == 0) {
-                        currentGameState = GameState.DRAW;
-                        bottomPrompt.setVisible(false);
-                        endstatusPrompt.setText("Draw!");
-                        endstatusPrompt.setVisible(true);
-                    }
-
-                    if (toggleGroup.getSelectedToggle() == simpleGame) {
-                        if (currentGameState == GameState.BLUE_WIN) {
-                            bottomPrompt.setVisible(false);
-                            endstatusPrompt.setText("Blue Player Wins!");
-                            endstatusPrompt.setVisible(true);
-
-                        } else {
-                            if (in == 0 && currentGameState ==  GameState.PLAYING) {
-                                bottomPrompt.setText("Red Player's Turn");
-                                bottomPrompt.setVisible(true);
-                                redPlayerTurn();
-                            }
-                        }
-                    }
-                    if (toggleGroup.getSelectedToggle() == generalGame) {
-                        if (currentGameState == GameState.BLUE_WIN && Cells.size() != boardSize * boardSize) {
-                            currentGameState = GameState.PLAYING;
-                        }
-                        if (Cells.size() == boardSize * boardSize) {
-                            if (bluelines > redlines) {
-                                currentGameState = GameState.BLUE_WIN;
-                                bottomPrompt.setVisible(false);
-                                endstatusPrompt.setText("Blue Player Wins!");
-                                endstatusPrompt.setVisible(true);
-                                System.out.printf("Red: %d \nBlue: %d", redlines, bluelines);
-                            }
-                            if (redlines > bluelines) {
-                                currentGameState = GameState.RED_WIN;
-                                bottomPrompt.setVisible(false);
-                                endstatusPrompt.setText("Red Player Wins!");
-                                endstatusPrompt.setVisible(true);
-                                System.out.printf("Red: %d \nBlue: %d", redlines, bluelines);
-                            }
-                            if (bluelines == redlines) {
-                                currentGameState = GameState.DRAW;
-                                bottomPrompt.setVisible(false);
-                                endstatusPrompt.setText("Draw!");
-                                endstatusPrompt.setVisible(true);
-                                System.out.printf("Red: %d \nBlue: %d", redlines, bluelines);
-                            }
-                        } else {
-                            if (in == 0) {
-                                bottomPrompt.setText("Red Player's Turn");
-                                bottomPrompt.setVisible(true);
-                                redPlayerTurn();
-                            }
+                        if (!cell.filled) {
+                            grid.getChildren().add(s);
                         }
                     }
                 }
-            });
-        }
+
+                if (toggle2.getSelectedToggle() == O2check) {
+                    Text o = new Text("O");
+                    o.setScaleX(cellSize / 11);
+                    o.setScaleY(cellSize / 11);
+                    shapeDraw sShape = new shapeDraw((cellSize / 2 + cellSize * gridx), (cellSize / 2 + cellSize * gridy), o);
+                    sShape.draw();
+//                    System.out.println(String.format("%d, %d", gridx, gridy));
+                    if (gridy < boardSize) {
+                        Cell cell = new Cell(gridx, gridy, 'O');
+                        String currentCell = String.format("%d, %d", gridx, gridy);
+                        Cells.add(cell);
+
+                        if (Cells.size() > 0) {
+                            for (int i = 0; i < Cells.size() - 1; ++i) {
+//                                System.out.println(String.format("%d '%s' difference '%s'", i, currentCell, Cells.get(i).getIndex()));
+                                if (Cells.get(i).x == gridx && Cells.get(i).y == gridy) {
+                                    ++in;
+                                    if (in > 0) {
+                                        Cells.remove(Cells.size() - 1);
+                                        cell.setIsFilled();
+                                    }
+                                } else {
+                                    in++;
+                                }
+                            }
+                        }
+                        if (!cell.filled) {
+                            grid.getChildren().add(o);
+                        }
+                    }
+                }
+
+                checkforSOS();
+                bottomPrompt.setText("Red Player's Turn");
+                bottomPrompt.setVisible(true);
+                System.out.println("RED PLAYER TURN\n");
+
+                if (toggleGroup.getSelectedToggle() == simpleGame) {
+                    if (currentGameState == GameState.BLUE_WIN) {
+                        bottomPrompt.setVisible(false);
+                        endstatusPrompt.setText("Blue Player Wins!");
+                        endstatusPrompt.setVisible(true);
+
+                    } else {
+                        redPlayerTurn();
+                    }
+                }
+                if (toggleGroup.getSelectedToggle() == generalGame) {
+                    if (currentGameState == GameState.BLUE_WIN) {
+
+                        currentGameState = GameState.PLAYING;
+                    }
+                    if (Cells.size() == boardSize * boardSize) {
+                        System.out.println("HFJF");
+                        if (bluelines > redlines) {
+                            currentGameState = GameState.BLUE_WIN;
+                            bottomPrompt.setVisible(false);
+                            endstatusPrompt.setText("Blue Player Wins!");
+                            endstatusPrompt.setVisible(true);
+                            System.out.printf("Red: %d \nBlue: %d", redlines, bluelines);
+                        }
+                        if(bluelines == redlines){
+                            currentGameState = GameState.DRAW;
+                            bottomPrompt.setVisible(false);
+                            endstatusPrompt.setText("Draw!");
+                            endstatusPrompt.setVisible(true);
+                            System.out.printf("Red: %d \nBlue: %d", redlines, bluelines);
+                        }
+                    } else {
+                        redPlayerTurn();
+                    }
+                }
+            }
+        });
     }
 
     public class shapeDraw {
@@ -797,8 +754,9 @@ public class GUI extends Application {
             s.setTranslateY(y);
         }
 
-    }
+        public void drawthat(){}
 
+    }
     public class drawLine {
         private double x, y, x2, y2;
         private Line line;
@@ -824,10 +782,10 @@ public class GUI extends Application {
         start.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                currentGameState = GameState.PLAYING;
-                redlines = 0;
-                bluelines = 0;
                 if(start.isSelected()){
+                    currentGameState = GameState.PLAYING;
+                    redlines = 0;
+                    bluelines = 0;
                     redPlayerTurn();
                 }
             }
