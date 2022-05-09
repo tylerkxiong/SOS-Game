@@ -1,26 +1,26 @@
-package src.sprint_2.product;
-
-import java.util.Objects;
-import java.util.Random;
+package src.sprint_4.product;
 
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.*;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
+import java.util.Objects;
+import java.util.Random;
 import java.util.Vector;
 
 import static java.lang.Integer.parseInt;
@@ -54,6 +54,8 @@ public class GUI extends Application {
     Random indexx = new Random();
     Random indexy = new Random();
     Random sor = new Random();
+    CheckBox record = new CheckBox("Record Game");
+
     int in = 1;
 
     int redlines = 0;
@@ -66,19 +68,19 @@ public class GUI extends Application {
     private GameState currentGameState;
 
     public static class Cell {
-        private final int x;
-        private final int y;
-        boolean filled = false;
-        private final char SorO;
+        public final int x;
+        public final int y;
+        public boolean filled = false;
+        public final char SorO;
         public Cell(int x, int y, char sorO) {
             this.x = x;
             this.y = y;
             this.SorO = sorO;
         }
         public String getIndex() {
-            return String.format("%d %d", x, y);
+            return String.format("%d, %d", x, y);
         }
-        private Character getSorO(){
+        public Character getSorO(){
             return SorO;
         }
 
@@ -127,11 +129,13 @@ public class GUI extends Application {
     }
 
     public void bottomMenu(){
+        record.setTranslateY(-20);
+        record.setTranslateX(-380);
         bottomPrompt.setTranslateY(-20);
         endstatusPrompt.setTranslateY(-20);
         start.setTranslateX(400);
         start.setTranslateY(-20);
-        bottom.getChildren().addAll(start);
+        bottom.getChildren().addAll(start, record);
         bottom.getChildren().add(bottomPrompt);
         bottom.getChildren().add(endstatusPrompt);
         endstatusPrompt.setVisible(false);
@@ -173,13 +177,13 @@ public class GUI extends Application {
                 grid.getChildren().add(r);
             }
         }
-        numrandc.setOnKeyReleased((EventHandler<Event>) event -> {
-            System.out.printf("\n\n\n\n\n\n%s\n\n\n\n\n",numrandc.getCharacters());
+        numrandc.textProperty().addListener(e -> {
+            System.out.printf("\n\n\n\n\n\n%s\n\n\n\n\n", numrandc.getCharacters());
             int size1 = 2520;
             int boardSize1 = parseInt(numrandc.getText());
             int cellSize1 = size1 / boardSize1;
-            for(int i = 0; i < size1; i+= cellSize1) {
-                for (int j = 0; j < size1; j += cellSize1){
+            for (int i = 0; i < size1; i += cellSize1) {
+                for (int j = 0; j < size1; j += cellSize1) {
                     Rectangle cell = new Rectangle(i, j, cellSize1, cellSize1);
                     cell.setStroke(Color.BLACK);
                     cell.setFill(Color.WHITE);
@@ -260,7 +264,6 @@ public class GUI extends Application {
         leftrightplayerchoices();
 
         root.setBottom(bottom);
-
         root.setCenter(grid);
         root.setRight(bluePlayer);
         root.setLeft(redPplayer);
@@ -278,7 +281,6 @@ public class GUI extends Application {
         int cellSize = size / boardSize;
         Cell currentCell = Cells.get(Cells.size() - 1);
         char cellso = Cells.get(Cells.size() - 1).SorO;
-//        System.out.printf("%d, %d %s\n", Cells.get(Cells.size() -1).x, Cells.get(Cells.size() -1).y, cellso );
         if (cellso == 'S') {
             for (int i = 0; i < Cells.size() - 1; ++i) {
                 if (currentCell.x - 1 == Cells.get(i).x && currentCell.y - 1 == Cells.get(i).y) {
@@ -526,6 +528,7 @@ public class GUI extends Application {
     }
 
     public void checkforwin(int boardSize) {
+
         if (Cells.size() == boardSize * boardSize && bluelines == 0 && redlines == 0) {
             currentGameState = GameState.DRAW;
             bottomPrompt.setVisible(false);
@@ -537,11 +540,13 @@ public class GUI extends Application {
                 bottomPrompt.setVisible(false);
                 endstatusPrompt.setText("Red Player Wins!");
                 endstatusPrompt.setVisible(true);
+                recordGame();
             }
             if (currentGameState == GameState.BLUE_WIN) {
                 bottomPrompt.setVisible(false);
                 endstatusPrompt.setText("Blue Player Wins!");
                 endstatusPrompt.setVisible(true);
+                recordGame();
             }
             if (in == 0 && currentGameState == GameState.PLAYING) {
 //                for (int i = 0; i < Cells.size(); ++i) {
@@ -577,6 +582,7 @@ public class GUI extends Application {
                     endstatusPrompt.setText("Red Player Wins!");
                     endstatusPrompt.setVisible(true);
                     System.out.printf("Red: %d \nBlue: %d", redlines, bluelines);
+                    recordGame();
                 }
                 if (bluelines > redlines) {
                     currentGameState = GameState.BLUE_WIN;
@@ -584,6 +590,7 @@ public class GUI extends Application {
                     endstatusPrompt.setText("Blue Player Wins!");
                     endstatusPrompt.setVisible(true);
                     System.out.printf("Red: %d \nBlue: %d", redlines, bluelines);
+                    recordGame();
                 }
                 if (bluelines == redlines) {
                     currentGameState = GameState.DRAW;
@@ -591,6 +598,7 @@ public class GUI extends Application {
                     endstatusPrompt.setText("Draw!");
                     endstatusPrompt.setVisible(true);
                     System.out.printf("Red: %d \nBlue: %d", redlines, bluelines);
+                    recordGame();
                 }
             } else {
                 if (in == 0) {
@@ -615,72 +623,69 @@ public class GUI extends Application {
         int boardSize = parseInt(numrandc.getText());
         int cellSize = size / boardSize;
         if (aiorhuman.getSelectedToggle() == Human) {
-            grid.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent mouseEvent) {
-                    if (currentGameState == GameState.PLAYING) {
-                        int gridx = (int) mouseEvent.getX() / cellSize;
-                        int gridy = (int) mouseEvent.getY() / cellSize;
-                        if (toggle.getSelectedToggle() == Scheck) {
-                            Text s = new Text("S");
-                            s.setScaleX(cellSize / 11);
-                            s.setScaleY(cellSize / 11);
-                            shapeDraw sShape = new shapeDraw((cellSize / 2 + cellSize * gridx), (cellSize / 2 + cellSize * gridy), s);
-                            sShape.draw();
+            grid.setOnMouseClicked(mouseEvent -> {
+                if (currentGameState == GameState.PLAYING) {
+                    int gridx = (int) mouseEvent.getX() / cellSize;
+                    int gridy = (int) mouseEvent.getY() / cellSize;
+                    if (toggle.getSelectedToggle() == Scheck) {
+                        Text s = new Text("S");
+                        s.setScaleX(cellSize / 11);
+                        s.setScaleY(cellSize / 11);
+                        shapeDraw sShape = new shapeDraw((cellSize / 2 + cellSize * gridx), (cellSize / 2 + cellSize * gridy), s);
+                        sShape.draw();
 
 
-                            if (gridy < boardSize) {
-                                Cell cell = new Cell(gridx, gridy, 'S');
-                                Cells.add(cell);
+                        if (gridy < boardSize) {
+                            Cell cell = new Cell(gridx, gridy, 'S');
+                            Cells.add(cell);
 
 
-                                if (Cells.size() > 0) {
-                                    for (int i = 0; i < Cells.size() - 1; ++i) {
-                                        if (Cells.get(i).x == gridx && Cells.get(i).y == gridy) {
-                                            ++in;
-                                            Cells.remove(Cells.size() - 1);
-                                            cell.setIsFilled();
-                                        }
+                            if (Cells.size() > 0) {
+                                for (int i = 0; i < Cells.size() - 1; ++i) {
+                                    if (Cells.get(i).x == gridx && Cells.get(i).y == gridy) {
+                                        ++in;
+                                        Cells.remove(Cells.size() - 1);
+                                        cell.setIsFilled();
                                     }
                                 }
-                                if (!cell.filled) {
-                                    grid.getChildren().add(s);
-                                    in = 0;
-                                    checkforSOS();
-                                    checkforwin(boardSize);
-                                }
+                            }
+                            if (!cell.filled) {
+                                grid.getChildren().add(s);
+                                in = 0;
+                                checkforSOS();
+                                checkforwin(boardSize);
                             }
                         }
-                        if (toggle.getSelectedToggle() == Ocheck) {
-                            Text o = new Text("O");
-                            o.setScaleX(cellSize / 11);
-                            o.setScaleY(cellSize / 11);
-                            shapeDraw sShape = new shapeDraw((cellSize / 2 + cellSize * gridx), (cellSize / 2 + cellSize * gridy), o);
-                            sShape.draw();
-                            if (gridy < boardSize) {
-                                Cell cell = new Cell(gridx, gridy, 'O');
-                                String currentCell = String.format("%d, %d", gridx, gridy);
-                                Cells.add(cell);
-
-                                if (Cells.size() > 0) {
-                                    for (int i = 0; i < Cells.size() - 1; ++i) {
-                                        if (Cells.get(i).x == gridx && Cells.get(i).y == gridy) {
-                                            ++in;
-                                            Cells.remove(Cells.size() - 1);
-                                            cell.setIsFilled();
-                                        }
-                                    }
-                                }
-                                if (!cell.filled) {
-                                    grid.getChildren().add(o);
-                                    in = 0;
-                                    checkforSOS();
-                                    checkforwin(boardSize);
-                                }
-                            }
-                        }
-
                     }
+                    if (toggle.getSelectedToggle() == Ocheck) {
+                        Text o = new Text("O");
+                        o.setScaleX(cellSize / 11);
+                        o.setScaleY(cellSize / 11);
+                        shapeDraw sShape = new shapeDraw((cellSize / 2 + cellSize * gridx), (cellSize / 2 + cellSize * gridy), o);
+                        sShape.draw();
+                        if (gridy < boardSize) {
+                            Cell cell = new Cell(gridx, gridy, 'O');
+                            String currentCell = String.format("%d, %d", gridx, gridy);
+                            Cells.add(cell);
+
+                            if (Cells.size() > 0) {
+                                for (int i = 0; i < Cells.size() - 1; ++i) {
+                                    if (Cells.get(i).x == gridx && Cells.get(i).y == gridy) {
+                                        ++in;
+                                        Cells.remove(Cells.size() - 1);
+                                        cell.setIsFilled();
+                                    }
+                                }
+                            }
+                            if (!cell.filled) {
+                                grid.getChildren().add(o);
+                                in = 0;
+                                checkforSOS();
+                                checkforwin(boardSize);
+                            }
+                        }
+                    }
+
                 }
             });
         }
@@ -766,69 +771,67 @@ public class GUI extends Application {
         int boardSize = parseInt(numrandc.getText());
         int cellSize = size / boardSize;
         if (aiorhuman2.getSelectedToggle() == Human2) {
-            grid.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent mouseEvent) {
-                    if (currentGameState == GameState.PLAYING) {
-                        int gridx = (int) mouseEvent.getX() / cellSize;
-                        int gridy = (int) mouseEvent.getY() / cellSize;
-                        if (toggle2.getSelectedToggle() == S2check) {
-                            Text s = new Text("S");
-                            s.setScaleX(cellSize / 11);
-                            s.setScaleY(cellSize / 11);
-                            shapeDraw sShape = new shapeDraw((cellSize / 2 + cellSize * gridx), (cellSize / 2 + cellSize * gridy), s);
-                            sShape.draw();
-                            if (gridy < boardSize) {
-                                Cell cell = new Cell(gridx, gridy, 'S');
-                                Cells.add(cell);
+            grid.setOnMouseClicked(mouseEvent -> {
+                if (currentGameState == GameState.PLAYING) {
+                    int gridx = (int) mouseEvent.getX() / cellSize;
+                    int gridy = (int) mouseEvent.getY() / cellSize;
+                    if (toggle2.getSelectedToggle() == S2check) {
+                        Text s = new Text("S");
+                        s.setScaleX(cellSize / 11);
+                        s.setScaleY(cellSize / 11);
+                        shapeDraw sShape = new shapeDraw((cellSize / 2 + cellSize * gridx), (cellSize / 2 + cellSize * gridy), s);
+                        sShape.draw();
+                        if (gridy < boardSize) {
+                            Cell cell = new Cell(gridx, gridy, 'S');
+                            Cells.add(cell);
 
-                                if (Cells.size() > 0) {
-                                    for (int i = 0; i < Cells.size() - 1; ++i) {
-                                        if (Cells.get(i).x == gridx && Cells.get(i).y == gridy) {
-                                            ++in;
-                                            Cells.remove(Cells.size() - 1);
-                                            cell.setIsFilled();
-                                        }
+                            if (Cells.size() > 0) {
+                                for (int i = 0; i < Cells.size() - 1; ++i) {
+                                    if (Cells.get(i).x == gridx && Cells.get(i).y == gridy) {
+                                        ++in;
+                                        Cells.remove(Cells.size() - 1);
+                                        cell.setIsFilled();
                                     }
                                 }
-                                if (!cell.filled) {
-                                    grid.getChildren().add(s);
-                                    in = 0;
-                                    checkforSOS();
-                                    checkforwin(boardSize);
-                                }
+                            }
+                            if (!cell.filled) {
+                                grid.getChildren().add(s);
+                                in = 0;
+                                checkforSOS();
+                                checkforwin(boardSize);
                             }
                         }
-                        if (toggle2.getSelectedToggle() == O2check) {
-                            Text o = new Text("O");
-                            o.setScaleX(cellSize / 11);
-                            o.setScaleY(cellSize / 11);
-                            shapeDraw sShape = new shapeDraw((cellSize / 2 + cellSize * gridx), (cellSize / 2 + cellSize * gridy), o);
-                            sShape.draw();
-                            if (gridy < boardSize) {
-                                Cell cell = new Cell(gridx, gridy, 'O');
-                                String currentCell = String.format("%d, %d", gridx, gridy);
-                                Cells.add(cell);
-
-                                if (Cells.size() > 0) {
-                                    for (int i = 0; i < Cells.size() - 1; ++i) {
-                                        if (Cells.get(i).x == gridx && Cells.get(i).y == gridy) {
-                                            ++in;
-                                            Cells.remove(Cells.size() - 1);
-                                            cell.setIsFilled();
-                                        }
-                                    }
-                                }
-                                if (!cell.filled) {
-                                    grid.getChildren().add(o);
-                                    in = 0;
-                                    checkforSOS();
-                                    checkforwin(boardSize);
-                                }
-                            }
-                        }
-
                     }
+                    if (toggle2.getSelectedToggle() == O2check) {
+                        Text o = new Text("O");
+                        //noinspection IntegerDivisionInFloatingPointContext
+                        o.setScaleX(cellSize / 11);
+                        o.setScaleY(cellSize / 11);
+                        shapeDraw sShape = new shapeDraw((cellSize / 2 + cellSize * gridx), (cellSize / 2 + cellSize * gridy), o);
+                        sShape.draw();
+                        if (gridy < boardSize) {
+                            Cell cell = new Cell(gridx, gridy, 'O');
+                            String currentCell = String.format("%d, %d", gridx, gridy);
+                            Cells.add(cell);
+
+                            if (Cells.size() > 0) {
+                                for (int i = 0; i < Cells.size() - 1; ++i) {
+                                    if (Cells.get(i).x == gridx && Cells.get(i).y == gridy) {
+                                        ++in;
+                                        Cells.remove(Cells.size() - 1);
+                                        cell.setIsFilled();
+                                    }
+                                }
+                            }
+                            if (!cell.filled) {
+                                grid.getChildren().add(o);
+                                in = 0;
+                                checkforSOS();
+                                checkforwin(boardSize);
+                            }
+                        }
+                    }
+
                 }
             });
         }
@@ -928,7 +931,7 @@ public class GUI extends Application {
         private double x, y, x2, y2;
         private Line line;
 
-        drawLine(double x, double y, double x2, double y2, Line line){
+        public drawLine(double x, double y, double x2, double y2, Line line){
             this.x = x;
             this.y = y;
             this.x2 = x2;
@@ -941,6 +944,25 @@ public class GUI extends Application {
             line.setStartY(y);
             line.setEndX(x2);
             line.setEndY(y2);
+        }
+    }
+
+    public void recordGame() {
+        if(record.isSelected()){
+            try {
+                PrintStream console = new PrintStream("Recorded Game.txt");
+                System.setOut(console);
+                for (int i = 0; i < Cells.size(); ++i) {
+                    if ((i + 1) % 2 == 0) {
+                        console.printf("%d. Blue Player played %s, which is %s. \n", i+1,Cells.get(i).getIndex(), Cells.get(i).getSorO());
+                    }
+                    else {
+                        console.printf("%d. Red Player played %s, which is %s. \n", i+1, Cells.get(i).getIndex(), Cells.get(i).getSorO());
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         }
     }
 

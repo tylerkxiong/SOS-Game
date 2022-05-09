@@ -1,5 +1,8 @@
-package src.sprint_2.product;
+package src.sprint_4.test;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.Objects;
 import java.util.Random;
 
@@ -10,6 +13,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.skin.CellSkinBase;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -18,14 +22,17 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.junit.Test;
 
+import java.util.Scanner;
 import java.util.Vector;
 
 import static java.lang.Integer.parseInt;
 
-public class GUI extends Application {
+public class GUITest extends Application {
     StackPane top = new StackPane();
     TextField numrandc = new TextField();
     StackPane bottom = new StackPane();
@@ -54,6 +61,8 @@ public class GUI extends Application {
     Random indexx = new Random();
     Random indexy = new Random();
     Random sor = new Random();
+    CheckBox record = new CheckBox("Record Game");
+
     int in = 1;
 
     int redlines = 0;
@@ -66,19 +75,19 @@ public class GUI extends Application {
     private GameState currentGameState;
 
     public static class Cell {
-        private final int x;
-        private final int y;
-        boolean filled = false;
-        private final char SorO;
+        public final int x;
+        public final int y;
+        public boolean filled = false;
+        public final char SorO;
         public Cell(int x, int y, char sorO) {
             this.x = x;
             this.y = y;
             this.SorO = sorO;
         }
         public String getIndex() {
-            return String.format("%d %d", x, y);
+            return String.format("%d, %d", x, y);
         }
-        private Character getSorO(){
+        public Character getSorO(){
             return SorO;
         }
 
@@ -127,11 +136,13 @@ public class GUI extends Application {
     }
 
     public void bottomMenu(){
+        record.setTranslateY(-20);
+        record.setTranslateX(-380);
         bottomPrompt.setTranslateY(-20);
         endstatusPrompt.setTranslateY(-20);
         start.setTranslateX(400);
         start.setTranslateY(-20);
-        bottom.getChildren().addAll(start);
+        bottom.getChildren().addAll(start, record);
         bottom.getChildren().add(bottomPrompt);
         bottom.getChildren().add(endstatusPrompt);
         endstatusPrompt.setVisible(false);
@@ -173,21 +184,21 @@ public class GUI extends Application {
                 grid.getChildren().add(r);
             }
         }
-        numrandc.setOnKeyReleased((EventHandler<Event>) event -> {
-            System.out.printf("\n\n\n\n\n\n%s\n\n\n\n\n",numrandc.getCharacters());
-            int size1 = 2520;
-            int boardSize1 = parseInt(numrandc.getText());
-            int cellSize1 = size1 / boardSize1;
-            for(int i = 0; i < size1; i+= cellSize1) {
-                for (int j = 0; j < size1; j += cellSize1){
-                    Rectangle cell = new Rectangle(i, j, cellSize1, cellSize1);
-                    cell.setStroke(Color.BLACK);
-                    cell.setFill(Color.WHITE);
-                    grid.getChildren().add(cell);
-                }
-            }
+        numrandc.textProperty().addListener(e -> {
+                    System.out.printf("\n\n\n\n\n\n%s\n\n\n\n\n", numrandc.getCharacters());
+                    int size1 = 2520;
+                    int boardSize1 = parseInt(numrandc.getText());
+                    int cellSize1 = size1 / boardSize1;
+                    for (int i = 0; i < size1; i += cellSize1) {
+                        for (int j = 0; j < size1; j += cellSize1) {
+                            Rectangle cell = new Rectangle(i, j, cellSize1, cellSize1);
+                            cell.setStroke(Color.BLACK);
+                            cell.setFill(Color.WHITE);
+                            grid.getChildren().add(cell);
+                        }
+                    }
 
-        });
+                });
 
         grid.setScaleX(.25);
         grid.setScaleY(.25);
@@ -260,7 +271,6 @@ public class GUI extends Application {
         leftrightplayerchoices();
 
         root.setBottom(bottom);
-
         root.setCenter(grid);
         root.setRight(bluePlayer);
         root.setLeft(redPplayer);
@@ -278,7 +288,6 @@ public class GUI extends Application {
         int cellSize = size / boardSize;
         Cell currentCell = Cells.get(Cells.size() - 1);
         char cellso = Cells.get(Cells.size() - 1).SorO;
-//        System.out.printf("%d, %d %s\n", Cells.get(Cells.size() -1).x, Cells.get(Cells.size() -1).y, cellso );
         if (cellso == 'S') {
             for (int i = 0; i < Cells.size() - 1; ++i) {
                 if (currentCell.x - 1 == Cells.get(i).x && currentCell.y - 1 == Cells.get(i).y) {
@@ -526,6 +535,7 @@ public class GUI extends Application {
     }
 
     public void checkforwin(int boardSize) {
+
         if (Cells.size() == boardSize * boardSize && bluelines == 0 && redlines == 0) {
             currentGameState = GameState.DRAW;
             bottomPrompt.setVisible(false);
@@ -537,11 +547,13 @@ public class GUI extends Application {
                 bottomPrompt.setVisible(false);
                 endstatusPrompt.setText("Red Player Wins!");
                 endstatusPrompt.setVisible(true);
+                recordGame();
             }
             if (currentGameState == GameState.BLUE_WIN) {
                 bottomPrompt.setVisible(false);
                 endstatusPrompt.setText("Blue Player Wins!");
                 endstatusPrompt.setVisible(true);
+                recordGame();
             }
             if (in == 0 && currentGameState == GameState.PLAYING) {
 //                for (int i = 0; i < Cells.size(); ++i) {
@@ -577,6 +589,7 @@ public class GUI extends Application {
                     endstatusPrompt.setText("Red Player Wins!");
                     endstatusPrompt.setVisible(true);
                     System.out.printf("Red: %d \nBlue: %d", redlines, bluelines);
+                    recordGame();
                 }
                 if (bluelines > redlines) {
                     currentGameState = GameState.BLUE_WIN;
@@ -584,6 +597,7 @@ public class GUI extends Application {
                     endstatusPrompt.setText("Blue Player Wins!");
                     endstatusPrompt.setVisible(true);
                     System.out.printf("Red: %d \nBlue: %d", redlines, bluelines);
+                    recordGame();
                 }
                 if (bluelines == redlines) {
                     currentGameState = GameState.DRAW;
@@ -591,6 +605,7 @@ public class GUI extends Application {
                     endstatusPrompt.setText("Draw!");
                     endstatusPrompt.setVisible(true);
                     System.out.printf("Red: %d \nBlue: %d", redlines, bluelines);
+                    recordGame();
                 }
             } else {
                 if (in == 0) {
@@ -928,7 +943,7 @@ public class GUI extends Application {
         private double x, y, x2, y2;
         private Line line;
 
-        drawLine(double x, double y, double x2, double y2, Line line){
+        public drawLine(double x, double y, double x2, double y2, Line line){
             this.x = x;
             this.y = y;
             this.x2 = x2;
@@ -944,8 +959,41 @@ public class GUI extends Application {
         }
     }
 
+    public void recordGame() {
+        if(record.isSelected()){
+            try {
+                PrintStream console = new PrintStream("Recorded Game.txt");
+                System.setOut(console);
+                for (int i = 0; i < Cells.size(); ++i) {
+                    if ((i + 1) % 2 == 0) {
+                        console.printf("%d. Blue Player played %s, which is %s. \n", i+1,Cells.get(i).getIndex(), Cells.get(i).getSorO());
+                    }
+                    else {
+                        console.printf("%d. Red Player played %s, which is %s. \n", i+1, Cells.get(i).getIndex(), Cells.get(i).getSorO());
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     @Override
     public void start(Stage primaryStage) {
+        Computer.setSelected(true);
+        Computer2.setSelected(true);
+        record.setSelected(true);
+
+        PauseTransition pause = new PauseTransition(Duration.millis(12));
+        pause.setOnFinished(e -> {
+            currentGameState = GameState.PLAYING;
+            redlines = 0;
+            bluelines = 0;
+            generalGame.setSelected(true);
+            bottomPrompt.setText("Red Player's Turn");
+            bottomPrompt.setVisible(true);
+            redPlayerTurn();});
+        pause.play();
         start.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {

@@ -12,39 +12,46 @@ import src.sprint_2.product.GUI;
 
 public class GUITest {
     @Test
-    public void testtopMenu() {
+    public void topMenu() {
     }
 
     @Test
-    public void testbottomMenu() {
+    public void bottomMenu() {
     }
 
     @Test
-    public void testdrawGrid() {
+    public void drawGrid() {
     }
 
     @Test
-    public void testleftrightplayerchoices() {
+    public void leftrightplayerchoices() {
     }
 
     @Test
-    public void testsetupScene() {
-    }
-    @Test
-    public void testitsadraw() {
-    }
-    @Test
-    public void testDiagonallogic() {
-    }
-    @Test
-    public void testVerticallogic() {
-    }
-    @Test
-    public void testHorzontalLogiv() {
-    }
-    @Test
-    public void testSimpleGame() {
+    public void setupScene() {
     }
 
+    @Test
+    public void checkforSOS() {
+    }
 
+    @Test
+    public void checkforwin() {
+    }
+
+    @Test
+    public void redPlayerTurn() {
+    }
+
+    @Test
+    public void bluePlayerTurn() {
+    }
+
+    @Test
+    public void start() {
+    }
+
+    @Test
+    public void main() {
+    }
 }
