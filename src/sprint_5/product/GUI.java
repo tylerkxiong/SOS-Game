@@ -1,4 +1,4 @@
-package src.sprint_4.product;
+package src.sprint_5.product;
 
 import javafx.animation.PauseTransition;
 import javafx.application.Application;
